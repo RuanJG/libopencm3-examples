@@ -1,4 +1,9 @@
-static void led_setup(void)
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/usart.h>
+#include <libopencm3/cm3/nvic.h>
+
+void led_setup(void)
 {
 	/* Enable GPIOA clock (for LED GPIOs). */
 	rcc_periph_clock_enable(RCC_GPIOC);

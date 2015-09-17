@@ -22,23 +22,65 @@
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/nvic.h>
 
+#include "uart.h"
+int usart1_id ;
+int usart2_id ;
+int usart3_id ;
+
+void led_setup(void);
+void heart_led_triggle();
+
+#define DEBUG_APP 1
+#define log(X...) if( DEBUG_APP ) printf(X...);
+
+
 
 static void clock_setup(void)
 {
 	rcc_clock_setup_in_hse_8mhz_out_72mhz();
 }
-#include "uart.c"
-#include "led.c"
+void do_echo(int id)
+{
+	uint8_t buff[1024];
+	int len,res;
 
+	len = do_read_usart(id , buff, 1024);
+	if( len > 0 ){
+		do_write_usart(id,buff,len);
+		heart_led_triggle();
+	}
+}
+void do_usart1_func()
+{
+	do_echo(usart1_id);
+}
+void do_usart2_func()
+{
+	do_echo(usart2_id);
+}
+void do_usart3_func()
+{
+	do_echo(usart3_id);
+}
 
 void setup()
 {
 	clock_setup();
 	led_setup();
-	usart1_setup();
+	usart1_id = usart1_setup(115200,8, USART_STOPBITS_1, USART_PARITY_NONE, USART_MODE_TX_RX);
+	usart2_id = usart2_setup(115200,8, USART_STOPBITS_1, USART_PARITY_NONE, USART_MODE_TX_RX);
+	usart3_id = usart3_setup(115200,8, USART_STOPBITS_1, USART_PARITY_NONE, USART_MODE_TX_RX);
 }
 void loop()
 {
+	do_usart_buffer_check(usart1_id, 1);
+	do_usart1_func();
+	do_usart_buffer_check(usart2_id, 1);
+	do_usart2_func();
+	do_usart_buffer_check(usart3_id, 1);
+	do_usart3_func();
+
+
 }
 int main(void)
 {
@@ -46,7 +88,7 @@ int main(void)
 	setup();
 	while(1){
 		loop();
-		__asm__("nop");
+		//__asm__("nop");
 	}
 	/* Wait forever and do nothing. 
 	while (1)
