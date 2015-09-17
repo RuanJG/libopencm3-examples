@@ -1,4 +1,5 @@
 #include "uart.h"
+#include "app_main.h"
 
 static usart_buffer_t usart1_buffer;
 static usart_buffer_t usart2_buffer;

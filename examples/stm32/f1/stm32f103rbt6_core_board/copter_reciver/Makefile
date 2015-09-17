@@ -24,6 +24,8 @@ C_SRC+= $(shell find  ./ -name '*.c')
 OBJS += $(ASM_SRC:%.s=%.o)
 OBJS += $(C_SRC:%.c=%.o)
 
+CFLAGS += -I ./mavlinkNew
+
 LDSCRIPT = ../stm32f103rbt6.ld
 
 include ../../Makefile.include

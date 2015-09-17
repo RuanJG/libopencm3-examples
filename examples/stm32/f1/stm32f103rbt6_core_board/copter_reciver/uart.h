@@ -1,3 +1,6 @@
+#ifndef __RUAN_UART_HEAD
+#define __RUAN_UART_HEAD
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
@@ -25,3 +28,5 @@ int usart3_setup(uint32_t baud,uint32_t bit, uint32_t stopbit, uint32_t parity, 
 int do_read_usart(int id, uint8_t *buffer, int len);
 int do_write_usart(int id, uint8_t *buffer, int len);
 int  do_usart_buffer_check(int id, int init);
+
+#endif
