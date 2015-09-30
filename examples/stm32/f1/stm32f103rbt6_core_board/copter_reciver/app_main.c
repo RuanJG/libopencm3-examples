@@ -17,14 +17,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/gpio.h>
-#include <libopencm3/stm32/usart.h>
-#include <libopencm3/cm3/nvic.h>
+
 
 #include "app_main.h"
 #include "uart.h"
-#include <mavlink.h>
+#include "delay.h"
 
 
 int usart1_id ;
@@ -57,7 +54,7 @@ void do_echo(int id)
 	}
 }
 int do_recive_and_handle_radio_message(int id)
-{//com = MAVLINK_COMM_0 MAVLINK_COMM_1 MAVLINK_COMM_2
+{//id = MAVLINK_COMM_0 MAVLINK_COMM_1 MAVLINK_COMM_2
 	uint8_t buff[1024];
 	int len,i,res, recived,com;
 	mavlink_message_t msg;
@@ -71,7 +68,7 @@ int do_recive_and_handle_radio_message(int id)
 		do_write_usart(COPTER_USART_ID,buff,len);
 		for( i = 0; i< len; i++)
 		{
-		   if( mavlink_parse_char(id , buff[i], &msg, &status) ) 
+		   if( mavlink_parse_char(com , buff[i], &msg, &status) ) 
 		   { 
       			// Handle message
 			recived = 1;
@@ -107,6 +104,19 @@ int do_recive_and_handle_sbus_package(int id)
 }
 
 
+void check_uart_loop()
+{
+	int u1,u2,u3;
+	u1 = do_usart_buffer_check(usart1_id, 1);
+	u2 = do_usart_buffer_check(usart2_id, 1);
+	u3 = do_usart_buffer_check(usart3_id, 1);
+	if( u1 == 1 || u2 == 1 || u3 == 1)
+	{
+		while(1){
+			log("uart buffer error : u1=%d,u2=%d,u3=%d\n",u1,u2,u3);
+		}
+	}
+}
 
 void setup()
 {
@@ -120,10 +130,10 @@ void loop()
 {
 
 	//do_recive_and_handle_radio_message(usart2_id);
-	do_recive_and_handle_sbus_package(RADIO_USART_ID);
-	do_usart_buffer_check(usart1_id, 1);
-	do_usart_buffer_check(usart2_id, 1);
-	do_usart_buffer_check(usart3_id, 1);
+	//do_recive_and_handle_sbus_package(RADIO_USART_ID);
+		timer_mdelay(1);
+		__asm__("nop");
+		log("aa pass a");
 }
 int main(void)
 {
@@ -133,10 +143,9 @@ int main(void)
 		loop();
 		//__asm__("nop");
 	}
-	/* Wait forever and do nothing. 
+
 	while (1)
 		__asm__("nop");
-	*/
 	return 0;
 }
 
