@@ -128,12 +128,11 @@ void setup()
 }
 void loop()
 {
-
+	static int time;
 	//do_recive_and_handle_radio_message(usart2_id);
 	//do_recive_and_handle_sbus_package(RADIO_USART_ID);
-		timer_mdelay(1);
-		__asm__("nop");
-		log("aa pass a");
+	log("%d s\n\r",time++);
+	mdelay(1000);
 }
 int main(void)
 {
@@ -141,7 +140,7 @@ int main(void)
 	setup();
 	while(1){
 		loop();
-		//__asm__("nop");
+		__asm__("nop");
 	}
 
 	while (1)

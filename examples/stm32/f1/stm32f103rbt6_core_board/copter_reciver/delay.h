@@ -9,5 +9,6 @@
 #include <libopencm3/cm3/systick.h>
 #include "uart.h"
 
+void mdelay(int ms);
 
 #endif
